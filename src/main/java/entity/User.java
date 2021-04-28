@@ -1,68 +1,51 @@
 package entity;
 
-public class User {
-    public String name;
-    private double id;
-    public String  email;
-    private double balance;
+import java.time.LocalDate;
+import java.util.UUID;
+import types.UserType;
 
-    public User(String name,double id, String email, double balance) {
+public class User {
+    private UUID id;
+    private String name;
+    private String email;
+    private float balance;
+    private UserType type;
+    private LocalDate createdAt;
+
+    public User(String name, String email, float balance, UserType type, LocalDate createdAt) {
+        this.id = UUID.randomUUID();
         this.name = name;
-        this .id = id;
         this.email = email;
         this.balance = balance;
+        this.type = type;
+        this.createdAt = createdAt;
     }
 
-    public User() {
-
+    public UUID getId() {
+        return id;
     }
-
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public double getBalance() {
+    public float getBalance() {
         return balance;
     }
 
-    public void setBalance(double balance) {
-        this.balance = balance;
+    public UserType getType() {
+        return type;
     }
 
-    public double getId() {
-        return id;
+    public LocalDate getCreatedAt() {
+        return createdAt;
     }
 
-    public void setId(double id) {
-        this.id = id;
+    public void setBalance(float newBalance) {
+        this.balance = newBalance;
     }
-
-    private User user;
-
-    public String setActiveUser(User user) {
-        this.user = user;
-        return "user update successfully";
-    }
-    public double getUserBalance() {
-        return user.getBalance();
-    }
-    public String creditUser(float amount) {
-        float newBalance = (float) (user.getBalance() + amount);
-        this.user.setBalance(newBalance);
-        return amount + " added successfully";
-    }
-
 }

@@ -1,52 +1,76 @@
 package shopping;
 
+import entity.Product;
 import entity.User;
-
 import java.util.ArrayList;
-import java.util.List;
 
 public class Shop {
-    private ArrayList<Products> products = new ArrayList<Products>();
+    private ArrayList<Product> products = new ArrayList<Product>();
+    private ArrayList<User> users = new ArrayList<User>();
 
-    User user = new User();
-
-    public String addProduct(Products product) {
-        this.products.add(product);
-        return product.name + " Added successfully";
+    public String createUser(User newUser){
+        users.add(newUser);
+        return "user created successfully";
     }
 
-    public ArrayList<Products> getAllProducts() {
+    public ArrayList<User> getUsers(){
+        return users;
+    }
+
+    public String createProduct(Product product){
+        products.add(product);
+        return " product created successfully";
+    }
+
+    public ArrayList<Product> getProducts() {
         return products;
     }
 
-    public Products getSingleProduct(int productId) {
-        return this.products.get(productId);
+    public String buyProduct(String productName, String userEmail, Integer noOfProduct){
+        Product productToSell = findProductByName(productName);
+        if(productToSell == null){ return "product not found"; }
+        if(productToSell.getQuantity() < noOfProduct) { return "not enough items to fulfill your order";}
+
+        User buyer = findUserByEmail(userEmail);
+        if(buyer == null){ return "user not found"; }
+
+        float buyerBalance = buyer.getBalance();
+        float totalCostOfPurchase = productToSell.getPrice() * noOfProduct;
+
+        if(buyerBalance < totalCostOfPurchase ) { return "not enough balance on users account";}
+
+        buyer.setBalance(buyerBalance - totalCostOfPurchase);
+        productToSell.setQuantity(productToSell.getQuantity() - noOfProduct);
+
+        updateUser(buyer);
+
+        return "Product purchase successful";
     }
 
-    public String removeProduct(int productId) {
-        try {
-            products.remove(productId);
-        } catch (Exception ex) {
-            return "Unable to remove specified flower!";
+    private Product findProductByName(String productName) {
+        for (Product currentProduct: this.products){
+            if(currentProduct.getName().toLowerCase().equals(productName.toLowerCase())){
+                return currentProduct;
+            }
         }
-        return "Flower removed successfully";
-
+        return null;
     }
 
-    public String addUser(User user) {
-        return user.name;
-    }
-    public String updateProduct(int productsIndex, Products newProduct) {
-        if (this.products.get(productsIndex) != null) {
-            //u can ask for an item,or make a loop,there are different ways to do it
-            Products oldProduct = this.products.get(productsIndex);
-            oldProduct.name = newProduct.name;
-            oldProduct.price = newProduct.price;
-            oldProduct.quantity = newProduct.quantity;
-            return "flower updated successfully";
-
-       }
-        return "flower not found";
+    private User findUserByEmail(String userEmail) {
+        for (User currentUser: this.users){
+            if(currentUser.getEmail().toLowerCase().equals(userEmail.toLowerCase())){
+                return currentUser;
+            }
+        }
+        return null;
     }
 
+    private void updateUser(User userToUpdate){
+        for (User currentUser: this.users){
+            if(currentUser.getId().equals(userToUpdate.getId())){
+                currentUser.setBalance(userToUpdate.getBalance());
+                // its possible to update something more here
+            }
+        }
+    }
 }
